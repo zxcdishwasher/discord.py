@@ -1,3 +1,5 @@
+import os
+import time
 import discord
 from discord.ext import commands
 
@@ -12,45 +14,42 @@ bot = commands.Bot(command_prefix=')', intents=intents)
 async def on_ready():
     print(f'We have logged in as {bot.user}')
 
-
-
 @bot.command()
 async def hello(ctx):
     await ctx.send('привет я nerd2')
+    image_path = 'image/nerd.png'
+    with open(image_path, 'rb') as d:
+        picture = discord.File(d)
+    await ctx.send(file=picture)
+
+@bot.command()
+async def random(ctx):
+    await ctx.send('random')
+    image_weights = {
+        'sigma/sigma.jpg': 0.7,  # более обычное изображение
+        'sigma/amogus.jpg': 0.2,  # менее обычное изображение
+        'sigma/giga.jpg': 0.1  # редкое изображение
+    }
+    images = random.choices(list(image_weights.keys()), weights = list(image_weights.values()), k=1)[0]
+    with open(f'image/{images}', 'rb') as f:
+        picture = discord.File(f)
+    await ctx.send(file=picture)
+
+@bot.command()
+async def animals(ctx):
+    await ctx.send('давай узнаем какое ты животное')
+    time.sleep(1)
+    await ctx.send('поздравлю, ты')
+    animal = os.listdir('animal')
+    ima = random.choice(animal)
+    with open(f'image/{ima}', 'rb') as g:
+        picture = discord.File(g)
+    await ctx.send(file=picture)
 
 
 @bot.command()
 async def ping(ctx):
     await ctx.send('pong')
 
-@bot.command()
-async def calculate(ctx, operation: str, left: float, right: float):
-    
-    """что вы бы хотели сделать add,subtract, multiply, divide?"""
-    result = 0
 
-    if operation.lower() == 'add':
-        result = left + right
-    elif operation.lower() == 'subtract':
-        result = left - right
-    elif operation.lower() == 'multiply':
-        result = left * right
-    elif operation.lower() == 'divide':
-        if right != 0:
-            result = left / right
-        else:
-            await ctx.send("Нельзя делить на ноль!")
-            return
-    else:
-        await ctx.send("Неподдерживаемая операция. Поддерживаемые операции: add, subtract, multiply, divide.")
-        return
-
-    await ctx.send(f'Result: {result}')
-
-@bot.command()
-async def help(ctx):
-    await ctx.send('у меня есть такие команды:hello, ping, calculate')
-
-
-
-bot.run('MTE3ODI3MzM4NjkwOTE1OTQ2NA.G0fFer.T1T2PcMgxqANBUT5OcYgLAtCvWjaxLapz3mAA0')
+bot.run('')
